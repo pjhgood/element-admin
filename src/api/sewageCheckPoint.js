@@ -93,3 +93,21 @@ export function publicSqlFieldConfig(templateCode) {
     method: "get"
   });
 }
+
+// 一点一档列表查询
+export function oneSewageCheckPointoneDocList(data) {
+  return request({
+    url: "/sc/sewageCheckPoint/oneSewageCheckPointoneDocList",
+    method: "post",
+    data
+  });
+}
+
+// 一点一档检测结果列表查询
+export function oneSewageCheckPointOneDocRecordList(data) {
+  return request({
+    url: "/sc/sewageCheckPoint/oneSewageCheckPointOneDocRecordList",
+    method: "post",
+    data
+  });
+}
