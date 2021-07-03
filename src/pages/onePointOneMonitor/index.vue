@@ -83,11 +83,11 @@
           </template>
         </el-table-column>
         <el-table-column
-          prop="gatherPoint"
+          prop="checkCount"
           label="累计检测次数"
         />
         <el-table-column
-          prop="gatherPoint"
+          prop="lastCheckDate"
           label="最近采样时间"
         />
         <el-table-column
@@ -156,7 +156,7 @@
             v-loading="loading"
             border
             height="500"
-            :data="tableData"
+            :data="recordList"
             style="width: 100%;margin-top:10px"
             :cell-style="{ textAlign: 'center' }"
             :header-cell-style="{textAlign: 'center'}"
@@ -248,6 +248,16 @@
               label="总毒品消费指数"
             />
           </el-table>
+          <div class="pagination-wrap">
+            <el-pagination
+              background
+              layout="prev, pager, next"
+              :page-size="10"
+              :total="recordTotal"
+              :current-page.sync="seachForm.pageNo"
+              @current-change="changeCurrent"
+            />
+          </div>
         </div>
       </span>
       <span slot="footer" class="dialog-footer">
@@ -264,6 +274,7 @@ import { regionData } from 'element-china-area-data'
 import PieChart from '@/pages/home/components/PieChart'
 import CrossChart from '@/pages/home/components/CrossChart'
 import {
+  publicSqlFieldConfig,
   oneSewageCheckPointoneDocList,
   oneSewageCheckPointOneDocRecordList
 } from '@/api/sewageCheckPoint'
@@ -329,7 +340,10 @@ export default {
         checkDateEnd: '',
         templateCode: ''
       },
-      templateCode: ''
+      templateCode: '',
+      recordList: [],
+      recordTotal: 0,
+      templateField: []
     }
   },
   watch: {
@@ -338,6 +352,7 @@ export default {
   created() {
     this.getList()
     this.templateCode = getServiceArea()
+    this.getSqlFieldConfig()
     var date = new Date()
     var year = date.getFullYear()
     var month = date.getMonth() + 1
@@ -393,6 +408,16 @@ export default {
         this.loading = false
       })
     },
+    getSqlFieldConfig() {
+      publicSqlFieldConfig(this.templateCode).then(res => {
+        if (res.code === 200) {
+          var fieldData = res.data.fields
+          fieldData.forEach(element => {
+            this.templateField.push(element.fieldCode)
+          })
+        }
+      })
+    },
     changeCurrent(e) {
       this.seachForm.pageNo = e
       this.getList()
@@ -400,7 +425,7 @@ export default {
     handleAddOrEdit(row) {
       this.title = '一点一档记录详情'
       this.editForm = JSON.parse(JSON.stringify(row))
-      this.dialogVisible = true
+      this.getOneDocRecordList(row.idStr)
     },
     handleClose() {
       this.editAddress = []
@@ -410,6 +435,25 @@ export default {
         }
       }
       this.dialogVisible = false
+    },
+    getOneDocRecordList(id) {
+      var data = {
+        pageNo: 1,
+        pageSize: 10,
+        checkPointId: id
+      }
+      oneSewageCheckPointOneDocRecordList(data).then(res => {
+        if (res.code === 200) {
+          this.recordList = res.data.records
+          this.recordTotal = res.data.total
+          this.dialogVisible = true
+        } else {
+          this.$message({
+            type: 'error',
+            message: res.msg
+          })
+        }
+      })
     }
   }
 }
@@ -423,6 +467,9 @@ export default {
     .pagination-wrap{
       text-align: center;
       margin-top:10px;
+    }
+    .tag-box{
+      margin-bottom:2px;
     }
   }
   .dialog-footer{
