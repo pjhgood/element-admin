@@ -111,6 +111,7 @@
       </div>
     </div>
     <el-dialog
+      v-if="dialogVisible"
       :title="title"
       :visible.sync="dialogVisible"
       top="10px"
@@ -127,7 +128,7 @@
                   <span>各类毒品占比</span>
                   <b class="data-title-right">]</b>
                 </div>
-                <pie-chart :form-data="formData" :height="'230px'" />
+                <pie-chart :form-data="formData" :height="'230px'" :text-color="'#999'" />
               </div>
 
             </el-col>
@@ -138,7 +139,7 @@
                   <span>各毒品消费指数</span>
                   <b class="data-title-right">]</b>
                 </div>
-                <cross-chart :form-data="formData" :height="'230px'" />
+                <bar-chart :form-data="formData" :height="'230px'" :text-color="'#999'" />
               </div>
             </el-col>
             <el-col :xs="24" :sm="8" :lg="8">
@@ -148,7 +149,7 @@
                   <span>毒品消费总量</span>
                   <b class="data-title-right">]</b>
                 </div>
-                <cross-chart :form-data="formData" :height="'230px'" />
+                <stack-bar-chart :form-data="formData" :height="'230px'" :text-color="'#999'" />
               </div>
             </el-col>
           </el-row>
@@ -272,7 +273,8 @@
 import { getServiceArea } from '@/utils/auth'
 import { regionData } from 'element-china-area-data'
 import PieChart from '@/pages/home/components/PieChart'
-import CrossChart from '@/pages/home/components/CrossChart'
+import StackBarChart from './components/StackBarChart'
+import BarChart from './components/BarChart.vue'
 import {
   publicSqlFieldConfig,
   oneSewageCheckPointoneDocList,
@@ -280,7 +282,7 @@ import {
 } from '@/api/sewageCheckPoint'
 export default {
   name: 'OnePointOneMonitor',
-  components: { PieChart, CrossChart },
+  components: { PieChart, StackBarChart, BarChart },
   data() {
     return {
       loading: false,
@@ -338,7 +340,8 @@ export default {
       formData: {
         checkDateStart: '',
         checkDateEnd: '',
-        templateCode: ''
+        templateCode: '',
+        checkPointId: ''
       },
       templateCode: '',
       recordList: [],
@@ -424,14 +427,13 @@ export default {
     },
     handleAddOrEdit(row) {
       this.title = '一点一档记录详情'
-      this.editForm = JSON.parse(JSON.stringify(row))
+      this.formData.checkPointId = row.checkPointId
       this.getOneDocRecordList(row.idStr)
     },
     handleClose() {
-      this.editAddress = []
-      for (const key in this.editForm) {
-        if (Object.hasOwnProperty.call(this.editForm, key)) {
-          this.editForm[key] = null
+      for (const key in this.formData) {
+        if (Object.hasOwnProperty.call(this.formData, key)) {
+          this.formData[key] = null
         }
       }
       this.dialogVisible = false
@@ -483,18 +485,18 @@ export default {
      padding: 0;
       height: 50%;
       // margin: 20px 10px 0px 10px;
-      border: 2px solid #032d60;
-      background: #032d60;
-      -webkit-box-shadow: #07417a 0px 0px 10px;
-      box-shadow: inset 0 0 30px #07417a;
+      // border: 2px solid #032d60;
+      // background: #032d60;
+      // -webkit-box-shadow: #07417a 0px 0px 10px;
+      // box-shadow: inset 0 0 30px #07417a;
       position: relative;
       .data-title {
         position: absolute;
-        top: -0.7em;
+        top: -1em;
         left: 50%;
         -webkit-transform: translateX(-50%);
         transform: translateX(-50%);
-        background-color: #032d60;
+        // background-color: #032d60;
         text-align: center;
         margin: 0 auto 0 auto;
         color: #83c7e3;
@@ -503,7 +505,7 @@ export default {
         overflow: hidden;
         text-overflow: ellipsis;
         .data-title-left .data-title-right {
-            color: #105eda;
+            // color: #105eda;
             font-family: "\5FAE\8F6F\96C5\9ED1";
             font-size: 16px;
         }

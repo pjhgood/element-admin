@@ -28,6 +28,10 @@ export default {
       default: () => {
         return {}
       }
+    },
+    textColor: {
+      type: String,
+      default: '#fff'
     }
   },
   data() {
@@ -75,7 +79,7 @@ export default {
           bottom: '2%',
           left: 'center',
           textStyle: {
-            color: '#fff'
+            color: this.textColor
           }
         },
         color: this.colors,
@@ -102,18 +106,19 @@ export default {
                 shadowColor: 'rgba(0, 0, 0, 0.5)'
               }
             },
+            // eslint-disable-next-line no-dupe-keys
             label: {
               normal: {
                 formatter: '{per|{d}%}\n{a|{b}}\n{hr|}', // 百分比之后换行显示文字
                 rich: {
                   a: {
-                    color: '#FFF', // 文字颜色
+                    color: this.textColor, // 文字颜色
                     fontSize: 11, // 文字大小
                     lineHeight: 20, // 间距
                     align: 'center' // 文字居中
                   },
                   per: {
-                    color: '#FFF', // 百分比文字颜色
+                    color: this.textColor, // 百分比文字颜色
                     align: 'center',
                     fontSize: 14
                   }
@@ -123,7 +128,7 @@ export default {
             labelLine: {
               normal: {
                 lineStyle: {
-                  color: '#fff' // 指向线颜色
+                  color: this.textColor // 指向线颜色
                 },
                 smooth: 0.1, // 线的拐弯程度
                 length: 18 // 第一条线长度
