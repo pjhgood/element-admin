@@ -139,7 +139,7 @@
                   <span>各毒品消费指数</span>
                   <b class="data-title-right">]</b>
                 </div>
-                <bar-chart :form-data="formData" :height="'230px'" :text-color="'#999'" />
+                <stack-bar-chart :form-data="formData" :height="'230px'" :text-color="'#999'" />
               </div>
             </el-col>
             <el-col :xs="24" :sm="8" :lg="8">
@@ -149,7 +149,7 @@
                   <span>毒品消费总量</span>
                   <b class="data-title-right">]</b>
                 </div>
-                <stack-bar-chart :form-data="formData" :height="'230px'" :text-color="'#999'" />
+                <bar-chart :form-data="formData" :height="'230px'" :text-color="'#999'" />
               </div>
             </el-col>
           </el-row>
@@ -387,8 +387,8 @@ export default {
       this.seachForm.province = ''
       this.seachForm.city = ''
       this.seachForm.areaCountry = ''
-      this.seachForm.checkDateStart = ''
-      this.seachForm.checkDateEnd = ''
+      // this.seachForm.checkDateStart = ''
+      // this.seachForm.checkDateEnd = ''
       if (this.selectedAddress.length > 0) {
         this.seachForm.province = this.selectedAddress[0]
         if (this.selectedAddress.length > 1) {
@@ -427,15 +427,10 @@ export default {
     },
     handleAddOrEdit(row) {
       this.title = '一点一档记录详情'
-      this.formData.checkPointId = row.checkPointId
+      this.formData.checkPointId = row.idStr
       this.getOneDocRecordList(row.idStr)
     },
     handleClose() {
-      for (const key in this.formData) {
-        if (Object.hasOwnProperty.call(this.formData, key)) {
-          this.formData[key] = null
-        }
-      }
       this.dialogVisible = false
     },
     getOneDocRecordList(id) {
