@@ -61,8 +61,17 @@ export default {
           this.seriesData = []
           this.xAxisData = []
           this.chartData.forEach((element, index) => {
-            this.xAxisData.push(element.city)
-            this.seriesData.push(element.value)
+            this.xAxisData.push(index + 1)
+            var data = {
+              name: element.dataIndex[index],
+              type: 'bar',
+              stack: '毒品',
+              emphasis: {
+                focus: 'series'
+              },
+              data: element.data
+            }
+            this.seriesData.push(data)
           })
           this.$nextTick(() => {
             this.initChart()
