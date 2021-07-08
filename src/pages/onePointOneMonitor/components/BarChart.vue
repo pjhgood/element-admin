@@ -61,7 +61,7 @@ export default {
           this.seriesData = res.data.data
           this.xAxisData = []
           this.seriesData.forEach((element, index) => {
-            this.xAxisData.push(index + 1)
+            this.xAxisData.push('第' + (index + 1) + '次采样')
           })
           this.$nextTick(() => {
             this.initChart()
@@ -120,20 +120,20 @@ export default {
         series: [{
           data: this.seriesData,
           type: 'bar',
-          showBackground: true,
-          barMaxWidth: '30%',
+          // showBackground: true,
+          barMaxWidth: 30,
           itemStyle: {
             normal: {
               color: function(params) {
-                if (params.value > 0 && params.value < 50) {
+                if (params.value > 0 && params.value < 10) {
                   return 'rgb(112,173,11)'
-                } else if (params.value >= 50 && params.value < 100) {
+                } else if (params.value >= 10 && params.value < 20) {
                   return 'rgb(91,155,213)'
-                } else if (params.value >= 100 && params.value < 150) {
+                } else if (params.value >= 20 && params.value < 30) {
                   return 'rgb(255,192,0)'
-                } else if (params.value >= 150 && params.value < 200) {
+                } else if (params.value >= 30 && params.value < 40) {
                   return 'rgb(237,125,49)'
-                } else if (params.value >= 200) {
+                } else if (params.value >= 40) {
                   return 'rgb(192,0,0)'
                 }
               }

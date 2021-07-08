@@ -89,7 +89,11 @@
         <el-table-column
           prop="lastCheckDate"
           label="最近采样时间"
-        />
+        >
+          <template slot-scope="scope">
+            <div>{{ scope.row.lastCheckDate.split(" ")[0] }}</div>
+          </template>
+        </el-table-column>
         <el-table-column
           label="操作"
           width="100"
@@ -103,7 +107,7 @@
         <el-pagination
           background
           layout="prev, pager, next"
-          :page-size="10"
+          :page-size="seachForm.pageSize"
           :total="totalCount"
           :current-page.sync="seachForm.pageNo"
           @current-change="changeCurrent"
@@ -253,10 +257,10 @@
             <el-pagination
               background
               layout="prev, pager, next"
-              :page-size="10"
+              :page-size="seachPointForm.pageSize"
               :total="recordTotal"
-              :current-page.sync="seachForm.pageNo"
-              @current-change="changeCurrent"
+              :current-page.sync="seachPointForm.pageNo"
+              @current-change="changePointCurrwnt"
             />
           </div>
         </div>
@@ -314,6 +318,11 @@ export default {
         pageSize: 10,
         province: ''
       },
+      seachPointForm: {
+        pageNo: 1,
+        pageSize: 10,
+        checkPointId: ''
+      },
       typeOptions: [
         {
           value: 1,
@@ -346,6 +355,7 @@ export default {
       templateCode: '',
       recordList: [],
       recordTotal: 0,
+      currtRow: '',
       templateField: []
     }
   },
@@ -425,22 +435,30 @@ export default {
       this.seachForm.pageNo = e
       this.getList()
     },
+    changePointCurrwnt(e) {
+      this.seachPointForm.pageNo = e
+      this.getOneDocRecordList
+    },
     handleAddOrEdit(row) {
+      this.currtRow = row
       this.title = '一点一档记录详情'
       this.formData.checkPointId = row.idStr
-      this.getOneDocRecordList(row.idStr)
+      this.seachPointForm.checkPointId = row.idStr
+      this.getOneDocRecordList()
     },
     handleClose() {
       this.dialogVisible = false
     },
-    getOneDocRecordList(id) {
-      var data = {
-        pageNo: 1,
-        pageSize: 10,
-        checkPointId: id
-      }
-      oneSewageCheckPointOneDocRecordList(data).then(res => {
+    getOneDocRecordList() {
+      oneSewageCheckPointOneDocRecordList(this.seachPointForm).then(res => {
         if (res.code === 200) {
+          res.data.records.forEach(element => {
+            element.gatherPoint = this.currtRow.gatherPoint
+            element.province = this.currtRow.province
+            element.city = this.currtRow.city
+            element.areaCountry = this.currtRow.areaCountry
+            element.gatherPointType = this.currtRow.gatherPointType
+          })
           this.recordList = res.data.records
           this.recordTotal = res.data.total
           this.dialogVisible = true

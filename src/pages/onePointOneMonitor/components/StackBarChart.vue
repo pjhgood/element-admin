@@ -1,3 +1,4 @@
+/* eslint-disable no-irregular-whitespace */
 <template>
   <div :class="className" :style="{height:height,width:width}" />
 </template>
@@ -38,7 +39,8 @@ export default {
       chart: null,
       chartData: [],
       xAxisData: [],
-      seriesData: []
+      seriesData: [],
+      colors: ['rgb(192,0,0)', 'rgb(237,125,49)', 'rgb(255,192,0)', 'rgb(91,155,213)', 'rgb(112,173,11)']
     }
   },
   created() {
@@ -60,18 +62,29 @@ export default {
           this.chartData = res.data
           this.seriesData = []
           this.xAxisData = []
-          this.chartData.forEach((element, index) => {
-            this.xAxisData.push(index + 1)
-            var data = {
-              name: element.dataIndex[index],
+          var dataIndex = this.chartData[0].dataIndex
+          dataIndex.forEach((element, i) => {
+            var dataList = []
+            this.chartData.forEach((c, index) => {
+              dataList.push(c.data[i])
+            })
+            var item = {
+              name: element,
               type: 'bar',
               stack: '毒品',
+              barWidth: 30,
               emphasis: {
                 focus: 'series'
               },
-              data: element.data
+              itemStyle: {
+                normal: { color: this.colors[i] }
+              },
+              data: dataList
             }
-            this.seriesData.push(data)
+            this.seriesData.push(item)
+          })
+          this.chartData.forEach((element, index) => {
+            this.xAxisData.push('第' + (index + 1) + '次采样')
           })
           this.$nextTick(() => {
             this.initChart()
@@ -118,7 +131,6 @@ export default {
         }],
         yAxis: [{
           type: 'value',
-          max: 80,
           axisTick: {
             show: false
           },
@@ -128,29 +140,7 @@ export default {
             }
           }
         }],
-        series: [{
-          data: this.seriesData,
-          type: 'bar',
-          showBackground: true,
-          barMaxWidth: '30%',
-          itemStyle: {
-            normal: {
-              color: function(params) {
-                if (params.value > 0 && params.value < 10) {
-                  return 'rgb(112,173,11)'
-                } else if (params.value >= 10 && params.value < 20) {
-                  return 'rgb(91,155,213)'
-                } else if (params.value >= 20 && params.value < 30) {
-                  return 'rgb(255,192,0)'
-                } else if (params.value >= 30 && params.value < 40) {
-                  return 'rgb(237,125,49)'
-                } else if (params.value >= 40) {
-                  return 'rgb(192,0,0)'
-                }
-              }
-            }
-          }
-        }]
+        series: this.seriesData
       })
     }
   }
